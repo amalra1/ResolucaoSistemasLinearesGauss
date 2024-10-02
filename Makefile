@@ -1,27 +1,20 @@
-# PROGRAMA
-    PROG = perfEG
+CC = gcc -Wno-format
 
-# Compilador
-    CC     = gcc
-    CFLAGS = 
-    LFLAGS = -lm
+CFLAGS = -I${LIKWID_INCLUDE} -DLIKWID_PERFMON -Wall
+LFLAGS = -L${LIKWID_LIB} -llikwid -lm
 
-# Lista de arquivos para distribuição
-DISTFILES = *.c *.h LEIAME* Makefile
-DISTDIR = `basename ${PWD}`
+TARGET = perfSL
 
-.PHONY: all clean purge dist
+all: $(TARGET)
+
+#$(TARGET): perfSL.o
+#	$(CC) -o $(TARGET) perfSL.o $(CFLAGS) $(LDFLAGS)
+
+$(TARGET) : % : %.c
+	$(CC) $(CFLAGS) -o $@ $^ utils.c $(LFLAGS)
 
 clean:
-	@echo "Limpando sujeira ..."
-	@rm -f *~ *.bak
+	@rm -f $(TARGET) *~ perfSL.out
 
-purge:  clean
-	@echo "Limpando tudo ..."
-	@rm -f $(PROG) *.o core a.out $(DISTDIR) $(DISTDIR).tar
-
-dist: purge
-	@echo "Gerando arquivo de distribuição ($(DISTDIR).tar) ..."
-	@ln -s . $(DISTDIR)
-	@tar -cvf $(DISTDIR).tar $(addprefix ./$(DISTDIR)/, $(DISTFILES))
-	@rm -f $(DISTDIR)
+purge: clean
+	@rm -f $(TARGET)
