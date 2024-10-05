@@ -63,6 +63,19 @@ void triangulariza_gauss(real_t **A, real_t *B, int_t n)
     }
 }
 
+void retrosubstituicao(real_t **A, real_t *B, int_t n, real_t *X)
+{
+    for (int i = n - 1; i >= 0; i--)
+    {
+        real_t soma = 0.0;
+        for (int j = i + 1; j < n; j++)
+        {
+            soma += A[i][j] * X[j];
+        }
+        X[i] = (B[i] - soma) / A[i][i];
+    }
+}
+
 int main()
 {
     int_t n;
@@ -73,6 +86,7 @@ int main()
     for (int i = 0; i < n; i++)
         A[i] = (real_t *)malloc(n * sizeof(real_t));
     real_t *B = (real_t *)malloc(n * sizeof(real_t));
+    real_t *X = (real_t *)malloc(n * sizeof(real_t));
 
     for (int i = 0; i < n; i++)
     {
@@ -84,10 +98,6 @@ int main()
 
     triangulariza_gauss(A, B, n);
 
-    // Retrossubstituição
-
-   // Imprime saída 
-
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
@@ -96,11 +106,23 @@ int main()
         printf("= %lf\n", B[i]);
     }
 
+    // Retrosubstituição
+    retrosubstituicao(A, B, n, X);
+
+    for (int i = 0; i < n; i++)
+    {
+        printf("%lf ", X[i]);
+    }
+    printf("\n");
+
+   // Imprime saída 
+
     // Frees
     for (int i = 0; i < n; i++)
         free(A[i]);
     free(A);
     free(B);
+    free(X);
 
     return 0;
 }
